@@ -12,3 +12,16 @@ days = 14
 
 # assets to ignore
 ignore_assets = ['USDC', 'PAX', 'BUSD', 'TUSD', 'USDS', 'BNB', 'MTL']
+
+# indicators from csv to add to the chart
+# later maybe chart generation just from this dict
+add_indicators = {
+    'ema_25': 1,
+    'wma_50': 1,
+    'wma_100': 1,
+    'wma_200': 1,
+    'macd': 2,
+    'macds': 2,
+    'macdh': 2,
+    'mfi': 3
+}

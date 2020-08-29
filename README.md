@@ -15,6 +15,10 @@ Currently only for Binance. If you need an account:
 - use TA-Lib and custom indicators
 	- edit indicators in marked area in gen_candles.py
 - save all data as csv
+- generate webpage for further examination (plotly):
+
+![alt text](charts/BTCUSDT.png "BTCUSDT example")
+
 
 ## Used Libraries
 
@@ -23,3 +27,5 @@ Currently only for Binance. If you need an account:
 [python-binance](https://github.com/sammchardy/python-binance)
 
 [TA-Lib](https://github.com/mrjbq7/ta-lib)
+
+[plotly](https://github.com/plotly/plotly.py)

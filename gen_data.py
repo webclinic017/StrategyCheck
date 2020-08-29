@@ -10,7 +10,7 @@ def only_numlist(candle_elem):
 
 
 # generate the classic candles data
-def gen_candles(symbol="BTCUSDT", days=14):
+def gen_candles(symbol='BTCUSDT', days=14):
     c = Client()
     candles = c.get_historical_klines(
         symbol,
@@ -19,12 +19,12 @@ def gen_candles(symbol="BTCUSDT", days=14):
     )
     candle_data = [only_numlist(candle) for candle in candles]
     df = pd.DataFrame(candle_data)
-    df.columns = ["date", "open", "high", "low", "close", "volume"]
-    df["date"] = df["date"] / 1000
+    df.columns = ['date', 'open', 'high', 'low', 'close', 'volume']
+    df['date'] = df['date'] / 1000
     return df
 
 
-def gen_ta_candles(symbol="BTCUSDT", days=14):
+def gen_ta_candles(symbol='BTCUSDT', days=14):
     data = gen_candles(symbol, days)
     inputs = {
         'open': data['open'].astype(float),
@@ -37,16 +37,18 @@ def gen_ta_candles(symbol="BTCUSDT", days=14):
     # set indicators below
 
     data['close_weight'] = WCLPRICE(inputs)
-    data["middle"] = (data["high"] + data["low"] + data["close"] + data["open"]) / 4
-    data["ema_25"] = EMA(inputs, timeperiod=25)
-    data["wma_50"] = WMA(inputs, timeperiod=50)
-    data["wma_100"] = WMA(inputs, timeperiod=100)
-    data["wma_200"] = WMA(inputs, timeperiod=200)
+    data['middle'] = (data['high'] + data['low'] + data['close'] + data['open']) / 4
+    data['ema_25'] = EMA(inputs, timeperiod=25)
+    data['wma_50'] = WMA(inputs, timeperiod=50)
+    data['wma_100'] = WMA(inputs, timeperiod=100)
+    data['wma_200'] = WMA(inputs, timeperiod=200)
+    data['macd'], data['macds'], data['macdh'] = MACD(inputs)
+    data['mfi'] = MFI(inputs, timeperiod=14)
 
     # set indicators above
     #################################################################################
     data = data.dropna()
-    data.to_csv(f"candle_data/{symbol}_{days}days_{conf.candle_interval}_ta.csv", index=False)
+    data.to_csv(f'candle_data/{symbol}_{days}days_{conf.candle_interval}_ta.csv', index=False)
     print(f'generated {symbol} ta-data')
 
 
