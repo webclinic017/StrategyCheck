@@ -1,0 +1,3 @@
+python-binance==0.7.5
+pandas==1.0.3
+TA-Lib==0.4.0
