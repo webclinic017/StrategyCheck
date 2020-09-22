@@ -5,7 +5,7 @@ min_volume = 30000000
 quote_asset = 'USDT'
 
 # candlestick interval (necessary!)
-candle_interval = '15MINUTE'
+candle_interval = '30MINUTE'
 
 # how many days to look back?
 days = 14
@@ -23,5 +23,8 @@ add_indicators = {
     'macd': 2,
     'macds': 2,
     'macdh': 2,
-    'mfi': 3
+    'mfi': 3,
+    'adx': 4,
+    'di_neg': 4,
+    'di_pos': 4
 }

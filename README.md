@@ -7,15 +7,23 @@ Currently only for Binance. If you need an account:
 
 ## Features
 
-- set conditions to filter the data (conf.py)
-	- minimum quote asset volume per 24h
-	- which quote asset to use (what you pay to buy an asset)
-	- candlestick interval and how many days you want to look back
-	- which assets should be ignored
-- use TA-Lib and custom indicators
-	- edit indicators in marked area in gen_candles.py
-- save all data as csv
-- generate webpage for further examination (plotly):
+### set conditions to filter the data (conf.py)
+
+| attribute | description |
+|-----------|-------------|
+| min_volume | minimum quote asset volume per 24h |
+| quote_asset | quote asset to use (USDT for BTCUSDT)|
+| candle_interval | candlestick interval (30 minutes default) |
+| days | how many days to look back? (default 14) |
+| ignore_assets | which assets to ignore entirely |
+| add_indicators | dataframe name of indicator as key, position in plotly as value |
+
+### use TA-Lib and custom indicators
+
+- edit indicators in marked area in gen_candles.py
+- to smooth your values put the desired indicator into EMA, MA, ...
+
+### saves all data as csv and generates webpage for further examination (plotly):
 
 ![alt text](charts/BTCUSDT.png "BTCUSDT example")
 

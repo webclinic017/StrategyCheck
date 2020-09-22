@@ -3,6 +3,7 @@ import plotly.graph_objs as go
 import pandas as pd
 import conf
 import strategy
+import os
 
 
 class Chart:
@@ -60,6 +61,16 @@ class Chart:
         self.figure.append_trace(
             go.Scatter(
                 x=self.df['date'],
+                y=self.df['wma_100'],
+                name='WMA_100'
+            ),
+            row=1,
+            col=1
+        )
+
+        self.figure.append_trace(
+            go.Scatter(
+                x=self.df['date'],
                 y=self.df['wma_200'],
                 name='WMA_200'
             ),
@@ -75,7 +86,7 @@ class Chart:
                 x=self.df['date'],
                 y=self.df['macd'],
                 name='MACD',
-                line_color='grey'
+                line=dict(color='grey')
             ),
             row=2,
             col=1
@@ -87,7 +98,7 @@ class Chart:
                 x=self.df['date'],
                 y=self.df['macds'],
                 name='MACD Signal',
-                line_color='yellow'
+                line=dict(color='yellow')
             ),
             row=2,
             col=1
@@ -116,6 +127,44 @@ class Chart:
             col=1
         )
 
+        # Row 4
+
+        # ADX Scatterplot
+        self.figure.append_trace(
+            go.Scatter(
+                x=self.df['date'],
+                y=self.df['adx'],
+                name='ADX',
+                line=dict(color='black')
+            ),
+            row=4,
+            col=1
+        )
+
+        # NDI Scatterplot
+        self.figure.append_trace(
+            go.Scatter(
+                x=self.df['date'],
+                y=self.df['di_neg'],
+                name='-DI',
+                line=dict(color='red')
+            ),
+            row=4,
+            col=1
+        )
+
+        # PDI Scatterplot
+        self.figure.append_trace(
+            go.Scatter(
+                x=self.df['date'],
+                y=self.df['di_pos'],
+                name='+DI',
+                line=dict(color='green')
+            ),
+            row=4,
+            col=1
+        )
+
         ##############################
         #### add indicators above ####
         ##############################
@@ -129,6 +178,8 @@ class Chart:
             height=size
         )
 
+        if not os.path.exists('charts'):
+            os.makedirs('charts')
         self.figure.write_html('charts/{}.html'.format(self.name))
         print(f'generated chart for {name}')
 

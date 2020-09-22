@@ -2,6 +2,7 @@ import conf
 from binance.client import Client
 import pandas as pd
 from talib.abstract import *
+import os
 
 
 # convert date to seconds and set every relevant non-float column to float
@@ -26,6 +27,11 @@ def gen_candles(symbol='BTCUSDT', days=14):
 
 def gen_ta_candles(symbol='BTCUSDT', days=14):
     data = gen_candles(symbol, days)
+
+    # abort if not enough data
+    if len(data) < 200:
+        return
+
     inputs = {
         'open': data['open'].astype(float),
         'high': data['high'].astype(float),
@@ -43,11 +49,20 @@ def gen_ta_candles(symbol='BTCUSDT', days=14):
     data['wma_100'] = WMA(inputs, timeperiod=100)
     data['wma_200'] = WMA(inputs, timeperiod=200)
     data['macd'], data['macds'], data['macdh'] = MACD(inputs)
-    data['mfi'] = MFI(inputs, timeperiod=14)
+    data['macd'] = EMA(data["macd"], 3)
+    data['macds'] = EMA(data["macds"], 3)
+    data['macdh'] = data["macd"] - data["macds"]
+    data['mfi'] = EMA(MFI(inputs, timeperiod=14), 5)
+    data['adx'] = EMA(ADX(inputs, timeperiod=14), 5)
+    data['di_neg'] = EMA(MINUS_DI(inputs, timeperiod=14), 5)
+    data['di_pos'] = EMA(PLUS_DI(inputs, timeperiod=14), 5)
 
     # set indicators above
     #################################################################################
     data = data.dropna()
+    if not os.path.exists('candle_data'):
+        os.makedirs('candle_data')
+
     data.to_csv(f'candle_data/{symbol}_{days}days_{conf.candle_interval}_ta.csv', index=False)
     print(f'generated {symbol} ta-data')
 
