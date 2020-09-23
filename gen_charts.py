@@ -32,6 +32,38 @@ class Chart:
             col=1
         )
 
+        date_long = [self.df['date'][i] for i in self.long_index]
+        date_short = [self.df['date'][i] for i in self.short_index]
+
+        close_long_filter = [self.df['close'].tolist()[i] for i in self.long_index]
+        close_short_filter = [self.df['close'].tolist()[i] for i in self.short_index]
+
+        # Long Signals
+        self.figure.append_trace(
+            go.Scatter(
+                x=date_long,
+                y=close_long_filter,
+                name="Buy Signals",
+                marker=dict(color="lime", size=12, opacity=0.5),
+                mode="markers"
+            ),
+            row=1,
+            col=1
+        )
+
+        # Short Signals
+        self.figure.append_trace(
+            go.Scatter(
+                x=date_short,
+                y=close_short_filter,
+                name="Sell Signals",
+                marker=dict(color="rgb(255, 36, 0)", size=12, opacity=0.5),
+                mode="markers"
+            ),
+            row=1,
+            col=1
+        )
+
         ##############################
         #### add indicators below ####
         ##############################
@@ -115,6 +147,35 @@ class Chart:
             col=1
         )
 
+        macd_long_filter = [self.df['macd'].tolist()[i] for i in self.long_index]
+        macd_short_filter = [self.df['macd'].tolist()[i] for i in self.short_index]
+
+        # Long Signals
+        self.figure.append_trace(
+            go.Scatter(
+                x=date_long,
+                y=macd_long_filter,
+                name="Buy Signals",
+                marker=dict(color="lime", size=12, opacity=0.5),
+                mode="markers"
+            ),
+            row=2,
+            col=1
+        )
+
+        # Short Signals
+        self.figure.append_trace(
+            go.Scatter(
+                x=date_short,
+                y=macd_short_filter,
+                name="Sell Signals",
+                marker=dict(color="rgb(255, 36, 0)", size=12, opacity=0.5),
+                mode="markers"
+            ),
+            row=2,
+            col=1
+        )
+
         # Row 3
 
         self.figure.append_trace(
@@ -122,6 +183,35 @@ class Chart:
                 x=self.df['date'],
                 y=self.df['mfi'],
                 name='MFI'
+            ),
+            row=3,
+            col=1
+        )
+
+        mfi_long_filter = [self.df['mfi'].tolist()[i] for i in self.long_index]
+        mfi_short_filter = [self.df['mfi'].tolist()[i] for i in self.short_index]
+
+        # Long Signals
+        self.figure.append_trace(
+            go.Scatter(
+                x=date_long,
+                y=mfi_long_filter,
+                name="Buy Signals",
+                marker=dict(color="lime", size=12, opacity=0.5),
+                mode="markers"
+            ),
+            row=3,
+            col=1
+        )
+
+        # Short Signals
+        self.figure.append_trace(
+            go.Scatter(
+                x=date_short,
+                y=mfi_short_filter,
+                name="Sell Signals",
+                marker=dict(color="rgb(255, 36, 0)", size=12, opacity=0.5),
+                mode="markers"
             ),
             row=3,
             col=1
@@ -165,6 +255,35 @@ class Chart:
             col=1
         )
 
+        adx_long_filter = [self.df['adx'].tolist()[i] for i in self.long_index]
+        adx_short_filter = [self.df['adx'].tolist()[i] for i in self.short_index]
+
+        # Long Signals
+        self.figure.append_trace(
+            go.Scatter(
+                x=date_long,
+                y=adx_long_filter,
+                name="Buy Signals",
+                marker=dict(color="lime", size=12, opacity=0.5),
+                mode="markers"
+            ),
+            row=4,
+            col=1
+        )
+
+        # Short Signals
+        self.figure.append_trace(
+            go.Scatter(
+                x=date_short,
+                y=adx_short_filter,
+                name="Sell Signals",
+                marker=dict(color="rgb(255, 36, 0)", size=12, opacity=0.5),
+                mode="markers"
+            ),
+            row=4,
+            col=1
+        )
+
         ##############################
         #### add indicators above ####
         ##############################
@@ -180,7 +299,7 @@ class Chart:
 
         if not os.path.exists('charts'):
             os.makedirs('charts')
-        self.figure.write_html('charts/{}.html'.format(self.name))
+        self.figure.write_html(f'charts/{self.name}.html')
         print(f'generated chart for {name}')
 
 

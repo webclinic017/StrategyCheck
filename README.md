@@ -1,6 +1,6 @@
 # StrategyCheck
 
-tool to visualize/check trading strategy so you can use it with your trading bot :]
+simple tool to visualize/check trading strategy so you can use it with your trading bot :]
 
 Currently only for Binance. If you need an account:
 [Register on Binance](https://www.binance.com/en/register?ref=23830900)
@@ -24,6 +24,8 @@ Currently only for Binance. If you need an account:
 - to smooth your values put the desired indicator into EMA, MA, ...
 
 ### saves all data as csv and generates webpage for further examination (plotly):
+- green dots indicate a long signal
+- red dots indicate a short signal
 
 ![alt text](charts/BTCUSDT.png "BTCUSDT example")
 
