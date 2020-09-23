@@ -2,6 +2,7 @@ import conf
 from binance.client import Client
 import pandas as pd
 from talib.abstract import *
+import os
 
 
 # convert date to seconds and set every relevant non-float column to float
@@ -10,7 +11,7 @@ def only_numlist(candle_elem):
 
 
 # generate the classic candles data
-def gen_candles(symbol="BTCUSDT", days=14):
+def gen_candles(symbol='BTCUSDT', days=14):
     c = Client()
     candles = c.get_historical_klines(
         symbol,
@@ -19,13 +20,18 @@ def gen_candles(symbol="BTCUSDT", days=14):
     )
     candle_data = [only_numlist(candle) for candle in candles]
     df = pd.DataFrame(candle_data)
-    df.columns = ["date", "open", "high", "low", "close", "volume"]
-    df["date"] = df["date"] / 1000
+    df.columns = ['date', 'open', 'high', 'low', 'close', 'volume']
+    df['date'] = df['date'] / 1000
     return df
 
 
-def gen_ta_candles(symbol="BTCUSDT", days=14):
+def gen_ta_candles(symbol='BTCUSDT', days=14):
     data = gen_candles(symbol, days)
+
+    # abort if not enough data
+    if len(data) < 200:
+        return
+
     inputs = {
         'open': data['open'].astype(float),
         'high': data['high'].astype(float),
@@ -37,16 +43,27 @@ def gen_ta_candles(symbol="BTCUSDT", days=14):
     # set indicators below
 
     data['close_weight'] = WCLPRICE(inputs)
-    data["middle"] = (data["high"] + data["low"] + data["close"] + data["open"]) / 4
-    data["ema_25"] = EMA(inputs, timeperiod=25)
-    data["wma_50"] = WMA(inputs, timeperiod=50)
-    data["wma_100"] = WMA(inputs, timeperiod=100)
-    data["wma_200"] = WMA(inputs, timeperiod=200)
+    data['middle'] = (data['high'] + data['low'] + data['close'] + data['open']) / 4
+    data['ema_25'] = EMA(inputs, timeperiod=25)
+    data['wma_50'] = WMA(inputs, timeperiod=50)
+    data['wma_100'] = WMA(inputs, timeperiod=100)
+    data['wma_200'] = WMA(inputs, timeperiod=200)
+    data['macd'], data['macds'], data['macdh'] = MACD(inputs)
+    data['macd'] = EMA(data["macd"], 3)
+    data['macds'] = EMA(data["macds"], 3)
+    data['macdh'] = data["macd"] - data["macds"]
+    data['mfi'] = EMA(MFI(inputs, timeperiod=14), 5)
+    data['adx'] = EMA(ADX(inputs, timeperiod=14), 5)
+    data['di_neg'] = EMA(MINUS_DI(inputs, timeperiod=14), 5)
+    data['di_pos'] = EMA(PLUS_DI(inputs, timeperiod=14), 5)
 
     # set indicators above
     #################################################################################
     data = data.dropna()
-    data.to_csv(f"candle_data/{symbol}_{days}days_{conf.candle_interval}_ta.csv", index=False)
+    if not os.path.exists('candle_data'):
+        os.makedirs('candle_data')
+
+    data.to_csv(f'candle_data/{symbol}_{days}days_{conf.candle_interval}_ta.csv', index=False)
     print(f'generated {symbol} ta-data')
 
 
