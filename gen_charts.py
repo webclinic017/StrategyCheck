@@ -32,257 +32,37 @@ class Chart:
             col=1
         )
 
-        date_long = [self.df['date'][i] for i in self.long_index]
-        date_short = [self.df['date'][i] for i in self.short_index]
+        # set date as index for graphs
+        self.date_long = [self.df['date'][i] for i in self.long_index]
+        self.date_short = [self.df['date'][i] for i in self.short_index]
 
-        close_long_filter = [self.df['close'].tolist()[i] for i in self.long_index]
-        close_short_filter = [self.df['close'].tolist()[i] for i in self.short_index]
-
-        # Long Signals
-        self.figure.append_trace(
-            go.Scatter(
-                x=date_long,
-                y=close_long_filter,
-                name="Buy Signals",
-                marker=dict(color="lime", size=12, opacity=0.5),
-                mode="markers"
-            ),
-            row=1,
-            col=1
-        )
-
-        # Short Signals
-        self.figure.append_trace(
-            go.Scatter(
-                x=date_short,
-                y=close_short_filter,
-                name="Sell Signals",
-                marker=dict(color="rgb(255, 36, 0)", size=12, opacity=0.5),
-                mode="markers"
-            ),
-            row=1,
-            col=1
-        )
 
         ##############################
         #### add indicators below ####
         ##############################
 
         # Row 1
-
-        self.figure.append_trace(
-            go.Scatter(
-                x=self.df['date'],
-                y=self.df['ema_25'],
-                name='EMA_25'
-            ),
-            row=1,
-            col=1
-        )
-
-        self.figure.append_trace(
-            go.Scatter(
-                x=self.df['date'],
-                y=self.df['wma_50'],
-                name='WMA_50'
-            ),
-            row=1,
-            col=1
-        )
-
-        self.figure.append_trace(
-            go.Scatter(
-                x=self.df['date'],
-                y=self.df['wma_100'],
-                name='WMA_100'
-            ),
-            row=1,
-            col=1
-        )
-
-        self.figure.append_trace(
-            go.Scatter(
-                x=self.df['date'],
-                y=self.df['wma_200'],
-                name='WMA_200'
-            ),
-            row=1,
-            col=1
-        )
+        self.add_indicator_to_graph('ema_25', 'scatter', 'purple')
+        self.add_indicator_to_graph('wma_50', 'scatter', 'orange')
+        self.add_indicator_to_graph('wma_100', 'scatter', 'cyan')
+        self.add_indicator_to_graph('wma_200', 'scatter', 'red')
+        self.add_signal_to_graph('close')
 
         # Row 2
-
-        # MACD Scatterplot
-        self.figure.append_trace(
-            go.Scatter(
-                x=self.df['date'],
-                y=self.df['macd'],
-                name='MACD',
-                line=dict(color='grey')
-            ),
-            row=2,
-            col=1
-        )
-
-        # MACD Signal Scatterplot
-        self.figure.append_trace(
-            go.Scatter(
-                x=self.df['date'],
-                y=self.df['macds'],
-                name='MACD Signal',
-                line=dict(color='yellow')
-            ),
-            row=2,
-            col=1
-        )
-
-        # MACD Histogram
-        self.figure.append_trace(
-            go.Bar(
-                x=self.df['date'],
-                y=self.df['macdh'],
-                name='MACDH'
-            ),
-            row=2,
-            col=1
-        )
-
-        macd_long_filter = [self.df['macd'].tolist()[i] for i in self.long_index]
-        macd_short_filter = [self.df['macd'].tolist()[i] for i in self.short_index]
-
-        # Long Signals
-        self.figure.append_trace(
-            go.Scatter(
-                x=date_long,
-                y=macd_long_filter,
-                name="Buy Signals",
-                marker=dict(color="lime", size=12, opacity=0.5),
-                mode="markers"
-            ),
-            row=2,
-            col=1
-        )
-
-        # Short Signals
-        self.figure.append_trace(
-            go.Scatter(
-                x=date_short,
-                y=macd_short_filter,
-                name="Sell Signals",
-                marker=dict(color="rgb(255, 36, 0)", size=12, opacity=0.5),
-                mode="markers"
-            ),
-            row=2,
-            col=1
-        )
+        self.add_indicator_to_graph('macd', 'scatter', 'grey')
+        self.add_indicator_to_graph('macds', 'scatter', 'yellow')
+        self.add_indicator_to_graph('macdh', 'bar', 'red')
+        self.add_signal_to_graph('macd')
 
         # Row 3
-
-        self.figure.append_trace(
-            go.Scatter(
-                x=self.df['date'],
-                y=self.df['mfi'],
-                name='MFI'
-            ),
-            row=3,
-            col=1
-        )
-
-        mfi_long_filter = [self.df['mfi'].tolist()[i] for i in self.long_index]
-        mfi_short_filter = [self.df['mfi'].tolist()[i] for i in self.short_index]
-
-        # Long Signals
-        self.figure.append_trace(
-            go.Scatter(
-                x=date_long,
-                y=mfi_long_filter,
-                name="Buy Signals",
-                marker=dict(color="lime", size=12, opacity=0.5),
-                mode="markers"
-            ),
-            row=3,
-            col=1
-        )
-
-        # Short Signals
-        self.figure.append_trace(
-            go.Scatter(
-                x=date_short,
-                y=mfi_short_filter,
-                name="Sell Signals",
-                marker=dict(color="rgb(255, 36, 0)", size=12, opacity=0.5),
-                mode="markers"
-            ),
-            row=3,
-            col=1
-        )
+        self.add_indicator_to_graph('mfi', 'scatter', 'black')
+        self.add_signal_to_graph('mfi')
 
         # Row 4
-
-        # ADX Scatterplot
-        self.figure.append_trace(
-            go.Scatter(
-                x=self.df['date'],
-                y=self.df['adx'],
-                name='ADX',
-                line=dict(color='black')
-            ),
-            row=4,
-            col=1
-        )
-
-        # NDI Scatterplot
-        self.figure.append_trace(
-            go.Scatter(
-                x=self.df['date'],
-                y=self.df['di_neg'],
-                name='-DI',
-                line=dict(color='red')
-            ),
-            row=4,
-            col=1
-        )
-
-        # PDI Scatterplot
-        self.figure.append_trace(
-            go.Scatter(
-                x=self.df['date'],
-                y=self.df['di_pos'],
-                name='+DI',
-                line=dict(color='green')
-            ),
-            row=4,
-            col=1
-        )
-
-        adx_long_filter = [self.df['adx'].tolist()[i] for i in self.long_index]
-        adx_short_filter = [self.df['adx'].tolist()[i] for i in self.short_index]
-
-        # Long Signals
-        self.figure.append_trace(
-            go.Scatter(
-                x=date_long,
-                y=adx_long_filter,
-                name="Buy Signals",
-                marker=dict(color="lime", size=12, opacity=0.5),
-                mode="markers"
-            ),
-            row=4,
-            col=1
-        )
-
-        # Short Signals
-        self.figure.append_trace(
-            go.Scatter(
-                x=date_short,
-                y=adx_short_filter,
-                name="Sell Signals",
-                marker=dict(color="rgb(255, 36, 0)", size=12, opacity=0.5),
-                mode="markers"
-            ),
-            row=4,
-            col=1
-        )
+        self.add_indicator_to_graph('adx', 'scatter', 'black')
+        self.add_indicator_to_graph('di_neg', 'scatter', 'red')
+        self.add_indicator_to_graph('di_pos', 'scatter', 'green')
+        self.add_signal_to_graph('adx')
 
         ##############################
         #### add indicators above ####
@@ -301,6 +81,60 @@ class Chart:
             os.makedirs('charts')
         self.figure.write_html(f'charts/{self.name}.html')
         print(f'generated chart for {name}')
+
+    def add_indicator_to_graph(self, name, plot_type, color):
+        if plot_type == 'scatter':
+            self.figure.append_trace(
+                go.Scatter(
+                    x=self.df['date'],
+                    y=self.df[name],
+                    name=name,
+                    line=dict(color=color)
+                ),
+                row=conf.add_indicators[name],
+                col=1
+            )
+        elif plot_type == 'bar':
+            self.figure.append_trace(
+                go.Bar(
+                    x=self.df['date'],
+                    y=self.df[name],
+                    name=name,
+                    marker=dict(color=color)
+                ),
+                row=2,
+                col=1
+            )
+
+    def add_signal_to_graph(self, name):
+        indicator_long_filter = [self.df[name].tolist()[i] for i in self.long_index]
+        indicator_short_filter = [self.df[name].tolist()[i] for i in self.short_index]
+
+        # Long Signals
+        self.figure.append_trace(
+            go.Scatter(
+                x=self.date_long,
+                y=indicator_long_filter,
+                name="Buy Signals",
+                marker=dict(color="lime", size=12, opacity=0.5),
+                mode="markers"
+            ),
+            row=conf.add_indicators[name] if name not in ['high', 'low', 'close', 'open'] else 1,
+            col=1
+        )
+
+        # Short Signals
+        self.figure.append_trace(
+            go.Scatter(
+                x=self.date_short,
+                y=indicator_short_filter,
+                name="Sell Signals",
+                marker=dict(color="rgb(255, 36, 0)", size=12, opacity=0.5),
+                mode="markers"
+            ),
+            row=conf.add_indicators[name] if name not in ['high', 'low', 'close', 'open'] else 1,
+            col=1
+        )
 
 
 if __name__ == '__main__':
