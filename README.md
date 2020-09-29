@@ -5,6 +5,12 @@ simple tool to visualize/check trading strategy so you can use it with your trad
 Currently only for Binance. If you need an account:
 [Register on Binance](https://www.binance.com/en/register?ref=23830900)
 
+## Usage
+
+1. set your configuration in conf.py
+2. set your strategy in strategy.py
+3. run main.py
+
 ## Features
 
 ### set conditions to filter the data (conf.py)
