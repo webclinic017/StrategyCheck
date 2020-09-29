@@ -9,7 +9,10 @@ import os
 class Chart:
     def __init__(self, name):
         self.name = name
-        self.df = pd.read_csv(f'candle_data/{name}_{conf.days}days_{conf.candle_interval}_ta.csv')
+        try:
+            self.df = pd.read_csv(f'candle_data/{name}_{conf.days}days_{conf.candle_interval}_ta.csv')
+        except FileNotFoundError:
+            return
         self.long_index = strategy.go_long(self.df)
         self.short_index = strategy.go_short(self.df)
         self.figure = make_subplots(
@@ -135,7 +138,3 @@ class Chart:
             row=conf.add_indicators[name] if name not in ['high', 'low', 'close', 'open'] else 1,
             col=1
         )
-
-
-if __name__ == '__main__':
-    c = Chart('BTCUSDT')

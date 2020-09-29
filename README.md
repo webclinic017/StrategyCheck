@@ -9,8 +9,7 @@ Currently only for Binance. If you need an account:
 
 1. set your configuration in conf.py
 2. set your strategy in strategy.py
-3. run gen_data.py
-4. run gen_charts.py
+3. run main.py
 
 ## Features
 
