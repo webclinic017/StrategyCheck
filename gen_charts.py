@@ -15,10 +15,13 @@ class Chart:
             return
         self.long_index = strategy.go_long(self.df)
         self.short_index = strategy.go_short(self.df)
+
+        # set up the whole graph
+        indicators_total = max(conf.add_indicators[item]['row'] for item in conf.add_indicators.keys())
         self.figure = make_subplots(
-            rows=len(set(conf.add_indicators.values())),
+            rows=indicators_total,
             cols=1,
-            row_width=[1 / len(set(conf.add_indicators.values()))] * len(set(conf.add_indicators.values()))
+            row_width=[1 / indicators_total] * indicators_total
         )
 
         # candlestick graph of asset
@@ -39,38 +42,13 @@ class Chart:
         self.date_long = [self.df['date'][i] for i in self.long_index]
         self.date_short = [self.df['date'][i] for i in self.short_index]
 
+        # add every indicator to graph (see conf.py)
+        for indicator in conf.add_indicators.keys():
+            self.add_indicator_to_graph(indicator)
+            if conf.add_indicators[indicator]['add_signal']:
+                self.add_signal_to_graph(indicator)
 
-        ##############################
-        #### add indicators below ####
-        ##############################
-
-        # Row 1
-        self.add_indicator_to_graph('ema_25', 'scatter', 'purple')
-        self.add_indicator_to_graph('wma_50', 'scatter', 'orange')
-        self.add_indicator_to_graph('wma_100', 'scatter', 'cyan')
-        self.add_indicator_to_graph('wma_200', 'scatter', 'red')
-        self.add_signal_to_graph('close')
-
-        # Row 2
-        self.add_indicator_to_graph('macd', 'scatter', 'grey')
-        self.add_indicator_to_graph('macds', 'scatter', 'yellow')
-        self.add_indicator_to_graph('macdh', 'bar', 'red')
-        self.add_signal_to_graph('macd')
-
-        # Row 3
-        self.add_indicator_to_graph('mfi', 'scatter', 'black')
-        self.add_signal_to_graph('mfi')
-
-        # Row 4
-        self.add_indicator_to_graph('adx', 'scatter', 'black')
-        self.add_indicator_to_graph('di_neg', 'scatter', 'red')
-        self.add_indicator_to_graph('di_pos', 'scatter', 'green')
-        self.add_signal_to_graph('adx')
-
-        ##############################
-        #### add indicators above ####
-        ##############################
-
+        # generate html file
         size = 1500
         self.figure.update_layout(
             title=self.name,
@@ -85,30 +63,37 @@ class Chart:
         self.figure.write_html(f'charts/{self.name}.html')
         print(f'generated chart for {name}')
 
-    def add_indicator_to_graph(self, name, plot_type, color):
-        if plot_type == 'scatter':
+    '''
+    This method adds an indicator (see conf.py) to the graph
+    plot_type: scatter/bar
+    '''
+    def add_indicator_to_graph(self, name):
+        if conf.add_indicators[name]['plot_type'] == 'scatter':
             self.figure.append_trace(
                 go.Scatter(
                     x=self.df['date'],
                     y=self.df[name],
                     name=name,
-                    line=dict(color=color)
+                    line=dict(color=conf.add_indicators[name]['color'])
                 ),
-                row=conf.add_indicators[name],
+                row=conf.add_indicators[name]['row'],
                 col=1
             )
-        elif plot_type == 'bar':
+        elif conf.add_indicators[name]['plot_type'] == 'bar':
             self.figure.append_trace(
                 go.Bar(
                     x=self.df['date'],
                     y=self.df[name],
                     name=name,
-                    marker=dict(color=color)
+                    marker=dict(color=conf.add_indicators[name]['color'])
                 ),
-                row=2,
+                row=conf.add_indicators[name]['row'],
                 col=1
             )
 
+    '''
+    This method sets green and red markers within the graph of the associated indicator
+    '''
     def add_signal_to_graph(self, name):
         indicator_long_filter = [self.df[name].tolist()[i] for i in self.long_index]
         indicator_short_filter = [self.df[name].tolist()[i] for i in self.short_index]
@@ -122,7 +107,7 @@ class Chart:
                 marker=dict(color="lime", size=12, opacity=0.5),
                 mode="markers"
             ),
-            row=conf.add_indicators[name] if name not in ['high', 'low', 'close', 'open'] else 1,
+            row=conf.add_indicators[name]['row'] if name not in ['high', 'low', 'close', 'open'] else 1,
             col=1
         )
 
@@ -135,6 +120,6 @@ class Chart:
                 marker=dict(color="rgb(255, 36, 0)", size=12, opacity=0.5),
                 mode="markers"
             ),
-            row=conf.add_indicators[name] if name not in ['high', 'low', 'close', 'open'] else 1,
+            row=conf.add_indicators[name]['row'] if name not in ['high', 'low', 'close', 'open'] else 1,
             col=1
         )
