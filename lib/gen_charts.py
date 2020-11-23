@@ -1,12 +1,12 @@
 from plotly.subplots import make_subplots
 import plotly.graph_objs as go
 import pandas as pd
-import strategy
+import lib.strategy as strategy
 import os
 import json
 
 
-with open("settings.json", "r") as settings_json:
+with open("lib/settings.json", "r") as settings_json:
     settings = json.load(settings_json)
     exchange_settings = settings["ExchangeSettings"]
     indicator_settings = settings["IndicatorSettings"]
@@ -16,7 +16,7 @@ class Chart:
     def __init__(self, name):
         self.name = name
         try:
-            self.df = pd.read_csv(f'candle_data/{name}_{exchange_settings["Days_to_look_back"]}days_{exchange_settings["Candle_Interval"]}_ta.csv')
+            self.df = pd.read_csv(f'output/candle_data/{name}_{exchange_settings["Days_to_look_back"]}days_{exchange_settings["Candle_Interval"]}_ta.csv')
         except FileNotFoundError:
             return
         self.long_index = strategy.go_long(self.df)
@@ -66,9 +66,9 @@ class Chart:
             height=size
         )
 
-        if not os.path.exists('charts'):
-            os.makedirs('charts')
-        self.figure.write_html(f'charts/{self.name}.html')
+        if not os.path.exists('output/charts'):
+            os.makedirs('output/charts')
+        self.figure.write_html(f'output/charts/{self.name}.html')
         print(f'generated chart for {name}')
 
     '''

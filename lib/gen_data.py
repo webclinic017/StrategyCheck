@@ -5,7 +5,7 @@ import os
 import json
 
 
-with open("settings.json", "r") as settings_json:
+with open("lib/settings.json", "r") as settings_json:
     settings = json.load(settings_json)
     exchange_settings = settings["ExchangeSettings"]
 
@@ -65,8 +65,8 @@ def gen_ta_candles(symbol='BTCUSDT', days=14):
     # set indicators above
     #################################################################################
     data = data.dropna()
-    if not os.path.exists('candle_data'):
-        os.makedirs('candle_data')
+    if not os.path.exists('output/candle_data'):
+        os.makedirs('output/candle_data')
 
-    data.to_csv(f'candle_data/{symbol}_{days}days_{exchange_settings["Candle_Interval"]}_ta.csv', index=False)
+    data.to_csv(f'output/candle_data/{symbol}_{days}days_{exchange_settings["Candle_Interval"]}_ta.csv', index=False)
     print(f'generated {symbol} ta-data')

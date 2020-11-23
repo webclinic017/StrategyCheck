@@ -23,7 +23,7 @@ Note: To smooth your values put the desired indicator into EMA, MA, ...
 - <span style="color:green">green dots</span> indicate a long signal
 - <span style="color:red">red dots</span> indicate a short signal
 
-![alt text](charts/BTCUSDT.png "BTCUSDT example")
+![alt text](output/charts/BTCUSDT.png "BTCUSDT example")
 
 
 ## Configuration 

@@ -1,11 +1,11 @@
-import gen_data
-import gen_charts
+import lib.gen_data as gen_data
+import lib.gen_charts as gen_charts
 from binance.client import Client
 import pandas as pd
 import json
 
 
-with open("settings.json", "r") as settings_json:
+with open("lib/settings.json", "r") as settings_json:
     settings = json.load(settings_json)
     filter_settings = settings["FilterSettings"]
     exchange_settings = settings["ExchangeSettings"]
