@@ -1,8 +1,13 @@
-import conf
 from binance.client import Client
 import pandas as pd
 from talib.abstract import *
 import os
+import json
+
+
+with open("settings.json", "r") as settings_json:
+    settings = json.load(settings_json)
+    exchange_settings = settings["ExchangeSettings"]
 
 
 # convert date to seconds and set every relevant non-float column to float
@@ -15,7 +20,7 @@ def gen_candles(symbol='BTCUSDT', days=14):
     c = Client()
     candles = c.get_historical_klines(
         symbol,
-        eval(f'c.KLINE_INTERVAL_{conf.candle_interval}'),
+        eval(f'c.KLINE_INTERVAL_{exchange_settings["Candle_Interval"]}'),
         f'{days} days ago UTC'
     )
     candle_data = [only_numlist(candle) for candle in candles]
@@ -63,5 +68,5 @@ def gen_ta_candles(symbol='BTCUSDT', days=14):
     if not os.path.exists('candle_data'):
         os.makedirs('candle_data')
 
-    data.to_csv(f'candle_data/{symbol}_{days}days_{conf.candle_interval}_ta.csv', index=False)
+    data.to_csv(f'candle_data/{symbol}_{days}days_{exchange_settings["Candle_Interval"]}_ta.csv', index=False)
     print(f'generated {symbol} ta-data')
