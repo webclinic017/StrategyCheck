@@ -1,12 +1,17 @@
 {
   "FilterSettings": {
-    "Min_Volume": 30000000,
+    "Min_Volume": 300000000,
     "Quote_Asset": "USDT"
   },
   "ExchangeSettings": {
     "Candle_Interval": "30MINUTE",
     "Days_to_look_back": 14,
     "Ignore_Assets": ["USDC", "PAX", "BUSD", "TUSD", "USDS", "BNB", "MTL"]
+  },
+  "StrategySettings": {
+    "check_peaks": true,
+    "Peak_Indicator": "close",
+    "Peak_Lookahead": 20
   },
   "IndicatorSettings": {
     "Add_Indicators": {
@@ -16,19 +21,19 @@
         "Plot_Type": "scatter",
         "Add_Signal": false
     },
-    "wma_50": {
+    "vwma_50": {
         "Row": 1,
         "Color": "orange",
         "Plot_Type": "scatter",
         "Add_Signal": false
     },
-    "wma_100": {
+    "vwma_100": {
         "Row": 1,
         "Color": "cyan",
         "Plot_Type": "scatter",
         "Add_Signal": false
     },
-    "wma_200": {
+    "vwma_200": {
         "Row": 1,
         "Color": "red",
         "Plot_Type": "scatter",
@@ -75,7 +80,19 @@
         "Color": "green",
         "Plot_Type": "scatter",
         "Add_Signal": false
-    }
+    },
+      "rvgi": {
+        "Row": 5,
+        "Color": "green",
+        "Plot_Type": "scatter",
+        "Add_Signal": true
+      },
+      "rvgi_signal": {
+        "Row": 5,
+        "Color": "red",
+        "Plot_Type": "scatter",
+        "Add_Signal": false
+      }
 }
   }
 }

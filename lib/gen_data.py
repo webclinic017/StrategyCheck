@@ -1,6 +1,7 @@
 from binance.client import Client
 import pandas as pd
 from talib.abstract import *
+import lib.indicators as indicators
 import os
 import json
 
@@ -49,18 +50,24 @@ def gen_ta_candles(symbol='BTCUSDT', days=14):
 
     data['close_weight'] = WCLPRICE(inputs)
     data['middle'] = (data['high'] + data['low'] + data['close'] + data['open']) / 4
+
     data['ema_25'] = EMA(inputs, timeperiod=25)
-    data['wma_50'] = WMA(inputs, timeperiod=50)
-    data['wma_100'] = WMA(inputs, timeperiod=100)
-    data['wma_200'] = WMA(inputs, timeperiod=200)
+    data['vwma_50'] = indicators.VWMA(data, "close", 50)
+    data['vwma_100'] = indicators.VWMA(data, "close", 100)
+    data['vwma_200'] = indicators.VWMA(data, "close", 200)
+
     data['macd'], data['macds'], data['macdh'] = MACD(inputs)
     data['macd'] = EMA(data["macd"], 3)
     data['macds'] = EMA(data["macds"], 3)
     data['macdh'] = data["macd"] - data["macds"]
+
     data['mfi'] = EMA(MFI(inputs, timeperiod=14), 5)
+
     data['adx'] = EMA(ADX(inputs, timeperiod=14), 5)
     data['di_neg'] = EMA(MINUS_DI(inputs, timeperiod=14), 5)
     data['di_pos'] = EMA(PLUS_DI(inputs, timeperiod=14), 5)
+
+    data['rvgi'], data['rvgi_signal'] = indicators.RVGI(data, 10)
 
     # set indicators above
     #################################################################################

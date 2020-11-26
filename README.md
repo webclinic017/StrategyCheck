@@ -13,9 +13,17 @@ Currently only for Binance. If you need an account:
 
 ## Features
 
-### use TA-Lib and custom indicators
+- calculate highest/lowest peaks to analyze manually
+- use TA-Lib and custom indicators
+	- use custom indicators (just modify indicators.py :])
+	- edit indicators in marked area in gen\_data.py within gen\_ta\_candles() method
 
-- edit indicators in marked area in gen\_data.py within gen\_ta\_candles() method
+<u>Additional Indicators:</u>
+
+- Middle (average of High, Low, Open, Close)
+- VWMA (Volume Weighted Moving Average)
+- RVGI (Relative Vigor Index + RVGI Signal)
+- Supertrend
 
 Note: To smooth your values put the desired indicator into EMA, MA, ...
 
@@ -44,6 +52,15 @@ All configuration changes must be made in settings.json
 | Candle\_Interval | candlestick interval (30 minutes default) |
 | Days\_to\_look\_back | how many days to look back? (default 14) |
 | Ignore\_Assets | which assets to ignore entirely |
+
+#### ExchangeSettings
+
+|property name| desription |
+|---------------------|------------|
+| check\_peaks | automatic peak detection instead of strategy check? |
+| Peak\_Indicator | the indicator which should be considered for peak calculation |
+| Peak\_Lookahead | how much candles should be at least between high/low peaks |
+
 
 ### IndicatorSettings
 

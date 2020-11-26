@@ -2,14 +2,17 @@ from plotly.subplots import make_subplots
 import plotly.graph_objs as go
 import pandas as pd
 import lib.strategy as strategy
+import lib.indicators as indicators
 import os
 import json
+from peakdetect import peakdetect
 
 
 with open("lib/settings.json", "r") as settings_json:
     settings = json.load(settings_json)
     exchange_settings = settings["ExchangeSettings"]
     indicator_settings = settings["IndicatorSettings"]
+    strategy_settings = settings["StrategySettings"]
 
 
 class Chart:
@@ -19,8 +22,17 @@ class Chart:
             self.df = pd.read_csv(f'output/candle_data/{name}_{exchange_settings["Days_to_look_back"]}days_{exchange_settings["Candle_Interval"]}_ta.csv')
         except FileNotFoundError:
             return
-        self.long_index = strategy.go_long(self.df)
-        self.short_index = strategy.go_short(self.df)
+        self.long_index = []
+        self.short_index = []
+        if strategy_settings["check_peaks"]:
+            indicator_peaks = peakdetect(
+                self.df[strategy_settings["Peak_Indicator"]],
+                lookahead=strategy_settings["Peak_Lookahead"])
+            self.long_index = [peak[0] for peak in indicator_peaks[1]]
+            self.short_index = [peak[0] for peak in indicator_peaks[0]]
+        else:
+            self.long_index = strategy.go_long(self.df)
+            self.short_index = strategy.go_short(self.df)
 
         # set up the whole graph
         indicators_total = max(indicator_settings["Add_Indicators"][item]['Row'] for item in indicator_settings["Add_Indicators"])
