@@ -53,7 +53,7 @@ All configuration changes must be made in settings.json
 | Days\_to\_look\_back | how many days to look back? (default 14) |
 | Ignore\_Assets | which assets to ignore entirely |
 
-#### ExchangeSettings
+#### StrategySettings
 
 |property name| desription |
 |---------------------|------------|
