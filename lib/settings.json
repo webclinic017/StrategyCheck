@@ -1,0 +1,98 @@
+{
+  "FilterSettings": {
+    "Min_Volume": 300000000,
+    "Quote_Asset": "USDT"
+  },
+  "ExchangeSettings": {
+    "Candle_Interval": "30MINUTE",
+    "Days_to_look_back": 14,
+    "Ignore_Assets": ["USDC", "PAX", "BUSD", "TUSD", "USDS", "BNB", "MTL"]
+  },
+  "StrategySettings": {
+    "check_peaks": true,
+    "Peak_Indicator": "close",
+    "Peak_Lookahead": 20
+  },
+  "IndicatorSettings": {
+    "Add_Indicators": {
+      "ema_25": {
+        "Row": 1,
+        "Color": "purple",
+        "Plot_Type": "scatter",
+        "Add_Signal": false
+    },
+    "vwma_50": {
+        "Row": 1,
+        "Color": "orange",
+        "Plot_Type": "scatter",
+        "Add_Signal": false
+    },
+    "vwma_100": {
+        "Row": 1,
+        "Color": "cyan",
+        "Plot_Type": "scatter",
+        "Add_Signal": false
+    },
+    "vwma_200": {
+        "Row": 1,
+        "Color": "red",
+        "Plot_Type": "scatter",
+        "Add_Signal": false
+    },
+    "macd": {
+        "Row": 2,
+        "Color": "grey",
+        "Plot_Type": "scatter",
+        "Add_Signal": true
+    },
+    "macds": {
+        "Row": 2,
+        "Color": "yellow",
+        "Plot_Type": "scatter",
+        "Add_Signal": false
+    },
+    "macdh": {
+        "Row": 2,
+        "Color": "red",
+        "Plot_Type": "bar",
+        "Add_Signal": false
+    },
+    "mfi": {
+        "Row": 3,
+        "Color": "black",
+        "Plot_Type": "scatter",
+        "Add_Signal": true
+    },
+    "adx": {
+        "Row": 4,
+        "Color": "black",
+        "Plot_Type": "scatter",
+        "Add_Signal": true
+    },
+    "di_neg": {
+        "Row": 4,
+        "Color": "red",
+        "Plot_Type": "scatter",
+        "Add_Signal": false
+    },
+    "di_pos": {
+        "Row": 4,
+        "Color": "green",
+        "Plot_Type": "scatter",
+        "Add_Signal": false
+    },
+      "rvgi": {
+        "Row": 5,
+        "Color": "green",
+        "Plot_Type": "scatter",
+        "Add_Signal": true
+      },
+      "rvgi_signal": {
+        "Row": 5,
+        "Color": "red",
+        "Plot_Type": "scatter",
+        "Add_Signal": false
+      }
+}
+  }
+}

@@ -1,23 +1,41 @@
 from plotly.subplots import make_subplots
 import plotly.graph_objs as go
 import pandas as pd
-import conf
-import strategy
+import lib.strategy as strategy
+import lib.indicators as indicators
 import os
+import json
+from peakdetect import peakdetect
+
+
+with open("lib/settings.json", "r") as settings_json:
+    settings = json.load(settings_json)
+    exchange_settings = settings["ExchangeSettings"]
+    indicator_settings = settings["IndicatorSettings"]
+    strategy_settings = settings["StrategySettings"]
 
 
 class Chart:
     def __init__(self, name):
         self.name = name
         try:
-            self.df = pd.read_csv(f'candle_data/{name}_{conf.days}days_{conf.candle_interval}_ta.csv')
+            self.df = pd.read_csv(f'output/candle_data/{name}_{exchange_settings["Days_to_look_back"]}days_{exchange_settings["Candle_Interval"]}_ta.csv')
         except FileNotFoundError:
             return
-        self.long_index = strategy.go_long(self.df)
-        self.short_index = strategy.go_short(self.df)
+        self.long_index = []
+        self.short_index = []
+        if strategy_settings["check_peaks"]:
+            indicator_peaks = peakdetect(
+                self.df[strategy_settings["Peak_Indicator"]],
+                lookahead=strategy_settings["Peak_Lookahead"])
+            self.long_index = [peak[0] for peak in indicator_peaks[1]]
+            self.short_index = [peak[0] for peak in indicator_peaks[0]]
+        else:
+            self.long_index = strategy.go_long(self.df)
+            self.short_index = strategy.go_short(self.df)
 
         # set up the whole graph
-        indicators_total = max(conf.add_indicators[item]['row'] for item in conf.add_indicators.keys())
+        indicators_total = max(indicator_settings["Add_Indicators"][item]['Row'] for item in indicator_settings["Add_Indicators"])
         self.figure = make_subplots(
             rows=indicators_total,
             cols=1,
@@ -42,10 +60,12 @@ class Chart:
         self.date_long = [self.df['date'][i] for i in self.long_index]
         self.date_short = [self.df['date'][i] for i in self.short_index]
 
-        # add every indicator to graph (see conf.py)
-        for indicator in conf.add_indicators.keys():
+        self.add_signal_to_graph('close')
+
+        # add every indicator to graph (see settings.json)
+        for indicator in indicator_settings["Add_Indicators"]:
             self.add_indicator_to_graph(indicator)
-            if conf.add_indicators[indicator]['add_signal']:
+            if indicator_settings["Add_Indicators"][indicator]['Add_Signal']:
                 self.add_signal_to_graph(indicator)
 
         # generate html file
@@ -58,9 +78,9 @@ class Chart:
             height=size
         )
 
-        if not os.path.exists('charts'):
-            os.makedirs('charts')
-        self.figure.write_html(f'charts/{self.name}.html')
+        if not os.path.exists('output/charts'):
+            os.makedirs('output/charts')
+        self.figure.write_html(f'output/charts/{self.name}.html')
         print(f'generated chart for {name}')
 
     '''
@@ -68,26 +88,26 @@ class Chart:
     plot_type: scatter/bar
     '''
     def add_indicator_to_graph(self, name):
-        if conf.add_indicators[name]['plot_type'] == 'scatter':
+        if indicator_settings["Add_Indicators"][name]['Plot_Type'] == 'scatter':
             self.figure.append_trace(
                 go.Scatter(
                     x=self.df['date'],
                     y=self.df[name],
                     name=name,
-                    line=dict(color=conf.add_indicators[name]['color'])
+                    line=dict(color=indicator_settings["Add_Indicators"][name]['Color'])
                 ),
-                row=conf.add_indicators[name]['row'],
+                row=indicator_settings["Add_Indicators"][name]['Row'],
                 col=1
             )
-        elif conf.add_indicators[name]['plot_type'] == 'bar':
+        elif indicator_settings["Add_Indicators"][name]['Plot_Type'] == 'bar':
             self.figure.append_trace(
                 go.Bar(
                     x=self.df['date'],
                     y=self.df[name],
                     name=name,
-                    marker=dict(color=conf.add_indicators[name]['color'])
+                    marker=dict(color=indicator_settings["Add_Indicators"][name]['Color'])
                 ),
-                row=conf.add_indicators[name]['row'],
+                row=indicator_settings["Add_Indicators"][name]['Row'],
                 col=1
             )
 
@@ -107,7 +127,7 @@ class Chart:
                 marker=dict(color="lime", size=12, opacity=0.5),
                 mode="markers"
             ),
-            row=conf.add_indicators[name]['row'] if name not in ['high', 'low', 'close', 'open'] else 1,
+            row=indicator_settings["Add_Indicators"][name]['Row'] if name not in ['high', 'low', 'close', 'open'] else 1,
             col=1
         )
 
@@ -120,6 +140,6 @@ class Chart:
                 marker=dict(color="rgb(255, 36, 0)", size=12, opacity=0.5),
                 mode="markers"
             ),
-            row=conf.add_indicators[name]['row'] if name not in ['high', 'low', 'close', 'open'] else 1,
+            row=indicator_settings["Add_Indicators"][name]['Row'] if name not in ['high', 'low', 'close', 'open'] else 1,
             col=1
         )

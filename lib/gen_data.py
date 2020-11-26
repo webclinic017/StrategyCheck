@@ -1,8 +1,14 @@
-import conf
 from binance.client import Client
 import pandas as pd
 from talib.abstract import *
+import lib.indicators as indicators
 import os
+import json
+
+
+with open("lib/settings.json", "r") as settings_json:
+    settings = json.load(settings_json)
+    exchange_settings = settings["ExchangeSettings"]
 
 
 # convert date to seconds and set every relevant non-float column to float
@@ -15,7 +21,7 @@ def gen_candles(symbol='BTCUSDT', days=14):
     c = Client()
     candles = c.get_historical_klines(
         symbol,
-        eval(f'c.KLINE_INTERVAL_{conf.candle_interval}'),
+        eval(f'c.KLINE_INTERVAL_{exchange_settings["Candle_Interval"]}'),
         f'{days} days ago UTC'
     )
     candle_data = [only_numlist(candle) for candle in candles]
@@ -44,24 +50,30 @@ def gen_ta_candles(symbol='BTCUSDT', days=14):
 
     data['close_weight'] = WCLPRICE(inputs)
     data['middle'] = (data['high'] + data['low'] + data['close'] + data['open']) / 4
+
     data['ema_25'] = EMA(inputs, timeperiod=25)
-    data['wma_50'] = WMA(inputs, timeperiod=50)
-    data['wma_100'] = WMA(inputs, timeperiod=100)
-    data['wma_200'] = WMA(inputs, timeperiod=200)
+    data['vwma_50'] = indicators.VWMA(data, "close", 50)
+    data['vwma_100'] = indicators.VWMA(data, "close", 100)
+    data['vwma_200'] = indicators.VWMA(data, "close", 200)
+
     data['macd'], data['macds'], data['macdh'] = MACD(inputs)
     data['macd'] = EMA(data["macd"], 3)
     data['macds'] = EMA(data["macds"], 3)
     data['macdh'] = data["macd"] - data["macds"]
+
     data['mfi'] = EMA(MFI(inputs, timeperiod=14), 5)
+
     data['adx'] = EMA(ADX(inputs, timeperiod=14), 5)
     data['di_neg'] = EMA(MINUS_DI(inputs, timeperiod=14), 5)
     data['di_pos'] = EMA(PLUS_DI(inputs, timeperiod=14), 5)
 
+    data['rvgi'], data['rvgi_signal'] = indicators.RVGI(data, 10)
+
     # set indicators above
     #################################################################################
     data = data.dropna()
-    if not os.path.exists('candle_data'):
-        os.makedirs('candle_data')
+    if not os.path.exists('output/candle_data'):
+        os.makedirs('output/candle_data')
 
-    data.to_csv(f'candle_data/{symbol}_{days}days_{conf.candle_interval}_ta.csv', index=False)
+    data.to_csv(f'output/candle_data/{symbol}_{days}days_{exchange_settings["Candle_Interval"]}_ta.csv', index=False)
     print(f'generated {symbol} ta-data')
